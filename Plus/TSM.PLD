@@ -1,0 +1,52 @@
+GAL16V8
+tsm
+
+; These originally used pin naming for the Unitron Macintosh Clones as that was the most
+; complete reverse engineering of the regitered macintosh PALS, howver this becomes very
+; confusing when looking at schematics so expect these to switch over to schematic 
+; labeling at some point.
+; Labeled TevTSM as it makes osciliscope trace comparison easier.
+
+
+Clock SYSCLK PCLK S1 RAMEN ROMEN AS UDS LDS GND 
+/OE CASL CASH RAS VCLK Q2 Q1 S0 DTACK VCC
+
+;CAS0 
+/CASL  = /S0 * S1 * SYSCLK 
+         + /S0  * /RAMEN * /LDS * SYSCLK
+         + /S0 * /CASL
+         + PCLK * /CASL
+/CASH  = /S0 * S1 * SYSCLK
+         + /S0 * /RAMEN * /UDS * SYSCLK
+         + /S0 * /CASH 
+/RAS.R = /PCLK * Q1 * S1
+         + /PCLK * Q1 * /RAMEN * DTACK
+         + PCLK * /RAS
+;TC on schematic
+/VCLK.R = /Q1 * PCLK * Q2 * VCLK 
+         + /VCLK * Q1 
+         + /VCLK * /PCLK 
+         + /VCLK * Q2 
+;C1M on schematic (1MHz clock, divide PCLK by 8)  
+/Q2.R = /PCLK * /Q1 * /S0 * Q2
+		+ S0 * /Q2
+		+ Q1 * /Q2
+		+ PCLK * /Q2
+;C4M on schematic (4MHz clock, divide PCLK by 2) 
+/Q1.R = /PCLK * Q1
+		+ PCLK * /Q1
+;C2M on schematic (2MHz clock)
+; This can be recovered from /RAS when it works 
+;/S0  = /RAS * /SYSCLK
+;        + /RAS * /S0
+/S0.R = /Q1 * PCLK * S0
+        + /S0 * Q1
+        + /S0 * /PCLK
+
+/DTACK = /ROMEN 
+         + /RAS * /RAMEN * /S1 
+         + /AS * /DTACK  * RAMEN 
+         + /AS * /DTACK * /S1
+         
+DESCRIPTION
+TevTSM -- Replication of Mac TSM based on public sources. 
