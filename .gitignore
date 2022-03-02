@@ -1,3 +1,7 @@
 .DS_Store
 build/*
 GALasm-master/*
+Plus/*.chp
+Plus/*.fus
+Plus/*.jed
+Plus/*.pin
